@@ -1,8 +1,11 @@
 package com.example.root.upfiletransfer;
 
+import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Adapter;
@@ -18,9 +21,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -31,7 +38,9 @@ public class Receive extends AppCompatActivity {
 
     ListView lv ;
     public final String url1 = "http://nipunsood.ooo/fp/";
+    public final String url2 = "http://nipunsood.ooo/ft/";
     public String username ;
+    public String filename  ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +52,6 @@ public class Receive extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), username, Toast.LENGTH_LONG).show();
         String url = url1 + username ;
         new JSONTask().execute(url);
-
     }
 
     public class JSONTask extends AsyncTask<String , String , List<ListContent> > {
@@ -58,7 +66,11 @@ public class Receive extends AppCompatActivity {
             lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                    ListContent temp = lists.get(position) ;
+                    String sender = temp.getName() ;
+                    filename = temp.getFilename() ;
+                    String url3 = url2 + username + "/" + sender + "/" + filename ;
+                    new JSONTask2().execute(url3) ;
                 }
             });
         }
@@ -127,6 +139,90 @@ public class Receive extends AppCompatActivity {
 //            Toast.makeText(getApplicationContext(), "LOL!", Toast.LENGTH_LONG).show();
 
             return null;
+        }
+    }
+
+    public class JSONTask2 extends AsyncTask<String , String , String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            HttpURLConnection connection = null;
+            BufferedReader reader = null;
+
+            try {
+                URL url = new URL(strings[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.connect();
+                InputStream stream = connection.getInputStream();
+                reader = new BufferedReader(new InputStreamReader(stream));
+                StringBuffer buffer = new StringBuffer();
+                String line = "";
+                while ((line = reader.readLine()) != null) {
+                    buffer.append(line);
+                }
+
+                String finalJson = buffer.toString();
+                byte[] tmp2 = Base64.decode(finalJson, Base64.NO_WRAP);
+                String val2 = new String(tmp2, "UTF-8");
+                Log.d("VAL", val2);
+
+//                File myDir = new File(getCacheDir() , "folder" ) ;
+//                myDir.mkdir() ;
+                String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/HELLO/";
+                File root = new File(path) ;
+////                if(!root.exists()){
+////                    root.mkdirs() ;
+////                }
+////                File f = new File(path + filename) ;
+////                if(f.exists()){
+////                    f.delete() ;
+////                }
+////                f.createNewFile() ;
+////                File f = new File(filename) ;
+//                FileOutputStream outputStream ;
+//                try{
+//                    outputStream = openFileOutput(path + "/" + filename , MODE_PRIVATE) ;
+//                    outputStream.write(val2.getBytes());
+//                    outputStream.close();
+//                }catch (Exception e){
+//                    e.printStackTrace();
+//                }
+//
+//
+//            } catch (MalformedURLException e) {
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//                File f = new File("yo.png") ;
+//                String filename = "/storage/emulated/0/yo.png";
+//                File sdCard = Environment.getExternalStorageDirectory();
+//                filename = filename.replace("/storage", sdCard.getAbsolutePath());
+//                File tempFile = new File(filename);
+//                try {
+//                    FileOutputStream fOut = new FileOutputStream(tempFile);
+//                    fOut.write(val2.getBytes());
+//                    // fOut.getChannel();
+//                    // etc...
+//                    fOut.close();
+//                } catch (Exception e) {
+//                    Log.w("DOWN", "FileOutputStream exception: - " + e.toString());
+//                }
+
+
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
         }
     }
 }

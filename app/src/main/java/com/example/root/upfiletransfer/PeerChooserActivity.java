@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
@@ -34,6 +35,8 @@ public class PeerChooserActivity extends AppCompatActivity {
     ArrayList<File> filesToBeSent ;
 
     public String username ;
+
+    public String hue = "" ;
 
 
     @Override
@@ -52,23 +55,24 @@ public class PeerChooserActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String user = tvReceiver.getText().toString() ;
                 for(File f : filesToBeSent){
-                    File originalFile = f ;
                     String encode = null ;
                     try {
 
-
-                        FileInputStream fileInputStreamReader = new FileInputStream(originalFile);
-                        byte[] bytes = new byte[(int)originalFile.length()];
-                        fileInputStreamReader.read(bytes);
+                        byte[] bytes = loadFile(f);
                         encode = new String(Base64.encodeBase64(bytes));
 
+                        Log.d("Encode : " , encode) ;
+
+//                        encode = "HELLO" ;
                         JSONObject jsonObject = new JSONObject() ;
 
                         jsonObject.put("name" , username);
                         jsonObject.put("sendto" , user);
-                        jsonObject.put("filename" , originalFile.getName());
+                        jsonObject.put("filename" , f.getName());
                         jsonObject.put("data" , encode) ;
-                        final String hue = jsonObject.toString(1) ;
+                        hue = jsonObject.toString(1) ;
+
+                        Log.d("HUE" , hue) ;
 
                         new AsyncTask<Void,Void,String>(){
 
@@ -120,5 +124,29 @@ public class PeerChooserActivity extends AppCompatActivity {
     private String getMimeType(String path) {
         String extension = MimeTypeMap.getFileExtensionFromUrl(path);
         return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+    }
+
+    private static byte[] loadFile(File file) throws IOException {
+        InputStream is = new FileInputStream(file);
+
+        long length = file.length();
+        if (length > Integer.MAX_VALUE) {
+            // File is too large
+        }
+        byte[] bytes = new byte[(int)length];
+
+        int offset = 0;
+        int numRead = 0;
+        while (offset < bytes.length
+                && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
+            offset += numRead;
+        }
+
+        if (offset < bytes.length) {
+            throw new IOException("Could not completely read file "+file.getName());
+        }
+
+        is.close();
+        return bytes;
     }
 }
