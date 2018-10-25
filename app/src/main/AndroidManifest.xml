@@ -33,7 +33,7 @@
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".DisplayFilesActivity"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"/>
         <activity android:name=".PeerChooserActivity" />
     </application>
 

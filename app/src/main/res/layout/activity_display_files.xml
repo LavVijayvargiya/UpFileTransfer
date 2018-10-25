@@ -4,9 +4,10 @@
     android:id="@+id/activity_display_files"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.akshat_maheshwari.shareit.DisplayFilesActivity">
+    tools:context=".DisplayFilesActivity">
 
     <TextView
+        android:textColor="@color/black"
         android:id="@+id/tvFolderEmpty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

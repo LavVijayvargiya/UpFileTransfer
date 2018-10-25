@@ -23,6 +23,8 @@ public class DisplayFilesActivity extends AppCompatActivity {
     HorizontalScrollView hsvFolderScroll;
     Button bSend, bCancel;
 
+    public String username ;
+
     FileListAdapter fileListAdapter;
     String currentDirectoryPath;
 
@@ -45,6 +47,8 @@ public class DisplayFilesActivity extends AppCompatActivity {
         lvFiles.setAdapter(fileListAdapter);
         tvCurrentFolder.setText(currentDirectoryPath);
 
+
+        username = getIntent().getStringExtra("username");
         // make tvCurrentFolder scroll to end whenever folder changes
         tvCurrentFolder.addTextChangedListener(new TextWatcher() {
             @Override
@@ -76,6 +80,7 @@ public class DisplayFilesActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(DisplayFilesActivity.this, PeerChooserActivity.class);
                 intent.putExtra("filesToBeSent", filesToBeSentSet);
+                intent.putExtra("username" , username );
                 startActivity(intent);
             }
         });

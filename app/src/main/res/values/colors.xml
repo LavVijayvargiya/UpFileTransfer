@@ -8,6 +8,6 @@
     <color name="darkgray">#6c6c6c</color>
     <color name="cardview_light_background">#fffafafa</color>
     <color name="colorBackground">#413e4f</color>
-    <color name="colorText">#FFFFFF</color>
+    <color name="colorText">#000000</color>
     <color name="colorTextHint">#51d8c7</color>
 </resources>
